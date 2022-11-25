@@ -139,6 +139,9 @@ world_map_2 <- world_map_1 %>%
 
 # Data ----
 
+
+
+
 map <- world_map_2%>% 
   rename(country = "region",
          region = "region.y")
@@ -146,9 +149,20 @@ map <- world_map_2%>%
 
 dt <- data_4 
 
+unique_primary_fuel<-  dt %>% 
+  mutate(total = sum(capacity_mw)) %>% 
+  group_by(primary_fuel) %>% 
+  summarise(perc = sum(capacity_mw/ total)) %>% 
+  arrange(desc(perc)) %>% pull(primary_fuel)
+
 # Functions ----
 
 
 
-rm(list=ls()[! ls() %in% c("map","dt")])
+rm(list=ls()[! ls() %in% c("map","dt","unique_primary_fuel")])
+
+
+
+
+
 

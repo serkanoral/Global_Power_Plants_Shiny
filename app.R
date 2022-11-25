@@ -11,12 +11,22 @@ source(file = "data.R")
 source(file = "plots.R")
 
 
+
 ui <- dashboardPage(
   dashboardHeader(title = "Power Plants"),
   dashboardSidebar(disable = TRUE),
   dashboardBody(tabsetPanel(id = "tab_selected",
-    tabPanel(title = "Global",leafletOutput("leaf_global_map"),
-             plotOutput("total_fuel_plot_")), tabPanel(title = "Country")))
+    tabPanel(title = "Global",selectInput(inputId = "fuel_types",
+                                          label = "Select Fuel Type",
+                                          choices = unique_primary_fuel,
+                                          selected = "Coal", 
+                                          multiple = FALSE),
+             leafletOutput("leaf_global_map"),
+             splitLayout(cellWidths = c("50%", "50%"),
+                         plotOutput("total_fuel_plot_"),
+                         plotOutput("top_15"))
+              ), 
+    tabPanel(title = "Country")))
 )
 
 
@@ -29,9 +39,12 @@ server <- function(input, output) {
     
 # render ----
     
-output$leaf_global_map <- renderLeaflet({leaf_global()})
-    
+output$leaf_global_map <- renderLeaflet({leaf_global(input$fuel_types)})
+
 output$total_fuel_plot_ <-  renderPlot({total_fuel_plot()})
+
+output$top_15 <- renderPlot({top_15_plot(input$fuel_types)})
+ 
 
     
 }
