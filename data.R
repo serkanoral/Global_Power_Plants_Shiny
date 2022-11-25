@@ -153,13 +153,19 @@ unique_primary_fuel<-  dt %>%
   mutate(total = sum(capacity_mw)) %>% 
   group_by(primary_fuel) %>% 
   summarise(perc = sum(capacity_mw/ total)) %>% 
-  arrange(desc(perc)) %>% pull(primary_fuel)
+  arrange(desc(perc)) %>% pull(primary_fuel) %>% as.character()
+
+unique_country_names<- dt %>% 
+  distinct(country_long) %>% 
+  arrange(country_long) %>% 
+  pull(country_long)
+  
 
 # Functions ----
 
 
 
-rm(list=ls()[! ls() %in% c("map","dt","unique_primary_fuel")])
+rm(list=ls()[! ls() %in% c("map","dt","unique_primary_fuel","unique_country_names")])
 
 
 

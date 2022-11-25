@@ -1,5 +1,6 @@
 library(leaflet)
 library(tidyverse)
+library(htmltools)
 
 primary_fuel_col <- colorFactor(topo.colors(15), dt$primary_fuel)
 
@@ -54,16 +55,22 @@ top_15_plot <- function(fuel_name){
 }
   
 
-  
-dt %>% 
-  filter(country_long == "USA") %>% 
-  leaflet(options = leafletOptions(zoomControl = FALSE,
-                                   minZoom = 1, maxZoom = 10)) %>% 
-  addTiles() %>% 
-  addCircles(lng =~ longitude,lat =~ latitude,opacity = 0.7, 
-             color =~ primary_fuel_col(primary_fuel),radius = 100, ) %>% 
-  addProviderTiles(providers$CartoDB.Voyager) %>% 
-  addLegend(pal = primary_fuel_col, values =~ primary_fuel,opacity = 0.8,title = NA)
+ leaf_country <- function(country_name, fuel_type){
+   
+   dt %>% 
+     filter(country_long == country_name & primary_fuel == fuel_type ) %>% 
+     leaflet(options = leafletOptions(zoomControl = FALSE,
+                                      minZoom = 1, maxZoom = 12)) %>% 
+     addTiles() %>% 
+     addCircles(lng =~ longitude,lat =~ latitude,opacity = 0.7, 
+                color =~ primary_fuel_col(primary_fuel),
+                radius =~ capacity_mw,
+                label = ~htmlEscape(paste0("Name: ",name,","," Fuel: ",primary_fuel,","," Capacity(MW): ",capacity_mw))) %>% 
+     addProviderTiles(providers$CartoDB.Voyager) %>% 
+     addLegend(pal = primary_fuel_col, values =~ primary_fuel,opacity = 0.8,title = NA)
+   
+ } 
+
 
 
 

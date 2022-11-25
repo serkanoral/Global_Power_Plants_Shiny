@@ -26,7 +26,19 @@ ui <- dashboardPage(
                          plotOutput("total_fuel_plot_"),
                          plotOutput("top_15"))
               ), 
-    tabPanel(title = "Country")))
+    tabPanel(title = "Country",
+             splitLayout(cellWidths = c("50%", "50%"),
+                                           selectInput(inputId = "country_names",
+                                                       label = "Select Country Names",
+                                                       choices = unique_country_names,
+                                                       selected = "Turkey", 
+                                                       multiple = FALSE),
+                         pickerInput(inputId = "country_names_picker",
+                                     label = "Select Fuel Type", 
+                                     choices = unique_primary_fuel,
+                                     selected = unique_primary_fuel, 
+                                     multiple = TRUE,)) ,
+             leafletOutput("leaf_country_map"))))
 )
 
 
@@ -45,7 +57,8 @@ output$total_fuel_plot_ <-  renderPlot({total_fuel_plot()})
 
 output$top_15 <- renderPlot({top_15_plot(input$fuel_types)})
  
-
+output$leaf_country_map <- 
+  renderLeaflet({leaf_country(country_name = input$country_names, input$country_names_picker)})
     
 }
 
