@@ -27,19 +27,20 @@ ui <- dashboardPage(
                          plotOutput("top_15"))
               ), 
     tabPanel(title = "Country",
-             splitLayout(cellWidths = c("50%", "50%"),
-                                           selectInput(inputId = "country_names",
-                                                       label = "Select Country Names",
-                                                       choices = unique_country_names,
-                                                       selected = "Turkey", 
-                                                       multiple = FALSE),
-                         pickerInput(inputId = "country_names_picker",
+             selectInput(inputId = "country_names",
+                                            label = "Select Country Names",
+                                            choices = unique_country_names,
+                                            selected = "Turkey", 
+                                            multiple = FALSE),
+                         pickerInput(inputId = "fuel_type_picker",
                                      label = "Select Fuel Type", 
                                      choices = unique_primary_fuel,
-                                     selected = unique_primary_fuel, 
-                                     multiple = TRUE,)) ,
-             leafletOutput("leaf_country_map"))))
+                                     selected = c("Fuel", "Gas", "Hydro"), 
+                                     multiple = TRUE,options = list(`actions-box` = TRUE)) ,
+             leafletOutput("leaf_country_map"),
+             plotOutput("fuel_country_plot"))))
 )
+
 
 
 
@@ -58,8 +59,12 @@ output$total_fuel_plot_ <-  renderPlot({total_fuel_plot()})
 output$top_15 <- renderPlot({top_15_plot(input$fuel_types)})
  
 output$leaf_country_map <- 
-  renderLeaflet({leaf_country(country_name = input$country_names, input$country_names_picker)})
-    
+  renderLeaflet({leaf_country(country_name = input$country_names, input$fuel_type_picker)})
+
+output$fuel_country_plot <- 
+  renderPlot({country_fuel_plot(fuel_type = input$fuel_type_picker, 
+                                country_name = input$country_names )})    
+
 }
 
 # Run ----

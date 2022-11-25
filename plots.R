@@ -71,7 +71,16 @@ top_15_plot <- function(fuel_name){
    
  } 
 
+ country_fuel_plot <- function(fuel_type, country_name) {
+   dt %>% 
+     filter(primary_fuel == fuel_type & country_long == country_name) %>% 
+     ggplot(aes(fct_rev(fct_reorder(name,capacity_mw)) , capacity_mw, fill = primary_fuel) )+ 
+     geom_col() +theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+     labs(x = NULL, y = NULL, fill = "Fuel Type")
+ }
 
+ 
+   
 
 
 
