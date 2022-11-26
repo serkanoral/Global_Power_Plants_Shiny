@@ -1,25 +1,32 @@
 library(leaflet)
 library(tidyverse)
 library(htmltools)
+library(randomcoloR)
 
-primary_fuel_col <- colorFactor(topo.colors(15), dt$primary_fuel)
+distinctColorPalette(15)
+
+primary_fuel_col <- colorFactor(distinctColorPalette(15), dt$primary_fuel)
 
 cluster_col <- 
-  colorFactor(palette = c("#fee8c8", "#fdbb84", "#e34a33"), 
+  colorFactor(palette = c("#1b9e77", "#d95f02", "#7570b3"), 
               levels = c("Low", "Medium", "High"))
 
+"CartoDB.Voyager"
 leaf_global <- function(fuel_name) {
   dt %>% 
     filter(primary_fuel == fuel_name) %>% 
     leaflet(options = leafletOptions(zoomControl = FALSE,
-                                     minZoom = 1, maxZoom = 4)) %>% 
+                                     minZoom = 1, maxZoom = 5)) %>% 
     addTiles() %>% 
     addCircles(lng =~ longitude,lat =~ latitude,opacity = 0.5, 
-               color =~ cluster_col(cluster),radius = 10, ) %>% 
-    addProviderTiles(providers$CartoDB.Voyager) %>% 
+               color =~ cluster_col(cluster),radius =~ capacity_mw ) %>% 
+    addProviderTiles(providers$Wikimedia) %>% 
     addLegend(pal = cluster_col, values =~ cluster,opacity = 0.8,title = NA) %>% 
     setView(lng = 28,lat = 41, zoom = 2.4)
+  
 }
+
+
 
 total_fuel_plot <- function(){
   dt %>% 
@@ -40,7 +47,7 @@ top_15_plot <- function(fuel_name){
     group_by(country_long) %>% 
     mutate(total = sum(capacity_mw)) %>% 
     group_by(primary_fuel,.add = TRUE) %>% 
-    summarise(country_long, primary_fuel,perc = round(sum(capacity_mw)/total,2),.groups = 'drop') %>% 
+    summarise(country_long, primary_fuel,perc = sum(capacity_mw)/total,.groups = 'drop') %>% 
     ungroup() %>% 
     distinct() %>% 
     filter(primary_fuel == fuel_name) %>% 
@@ -76,7 +83,7 @@ top_15_plot <- function(fuel_name){
      filter(primary_fuel == fuel_type & country_long == country_name) %>% 
      ggplot(aes(fct_rev(fct_reorder(name,capacity_mw)) , capacity_mw, fill = primary_fuel) )+ 
      geom_col() +theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-     labs(x = NULL, y = NULL, fill = "Fuel Type")
+     labs(x = NULL, y = NULL, fill = "Fuel Type") 
  }
 
  

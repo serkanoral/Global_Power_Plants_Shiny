@@ -14,7 +14,7 @@ source(file = "plots.R")
 
 ui <- dashboardPage(
   dashboardHeader(title = "Power Plants"),
-  dashboardSidebar(disable = TRUE),
+  dashboardSidebar(collapsed = TRUE),
   dashboardBody(tabsetPanel(id = "tab_selected",
     tabPanel(title = "Global",selectInput(inputId = "fuel_types",
                                           label = "Select Fuel Type",
