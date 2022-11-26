@@ -14,7 +14,7 @@ source(file = "plots.R")
 
 ui <- dashboardPage(
   dashboardHeader(title = "Power Plants"),
-  dashboardSidebar(collapsed = TRUE,uiOutput("sidebar")),
+  dashboardSidebar(collapsed = FALSE,uiOutput("sidebar")),
   dashboardBody(tabsetPanel(id = "tab_selected",
     tabPanel(title = "Global",
              leafletOutput("leaf_global_map"),
@@ -40,24 +40,54 @@ server <- function(input, output) {
     
 # render ----
   
-# Global    
+# Global 
+
+  leaf_global_<-  reactive({
+    req(input$fuel_types)
+    req(input$levels)
+    leaf_global(fuel_name = input$fuel_types,level = input$levels)})
+
 output$leaf_global_map <- 
-  renderLeaflet({leaf_global(fuel_name = input$fuel_types,level = input$levels)})
+  renderLeaflet({leaf_global_()})
+
+
 
 output$total_fuel_plot_ <-  renderPlot({total_fuel_plot()})
 
-output$top_15 <- renderPlot({top_15_plot(input$fuel_types)})
+
+top_15_plot_ <- reactive({
+  req(input$fuel_types)
+  top_15_plot(input$fuel_types)
+})
+
+output$top_15 <- renderPlot({top_15_plot_()})
 
 # Country
+leaf_country_ <- reactive({
+  req(input$country_names)
+  req(input$fuel_type_picker)
+  leaf_country(country_name = input$country_names, input$fuel_type_picker)
+})
 
 output$leaf_country_map <- 
-  renderLeaflet({leaf_country(country_name = input$country_names, input$fuel_type_picker)})
+  renderLeaflet({leaf_country_()})
+
+country_fuel_plot_ <- reactive({
+  req(input$fuel_type_picker)
+  req(input$country_names)
+  country_fuel_plot(fuel_type = input$fuel_type_picker, 
+                    country_name = input$country_names )
+})
 
 output$fuel_country_plot <- 
-  renderPlot({country_fuel_plot(fuel_type = input$fuel_type_picker, 
-                                country_name = input$country_names )}) 
+  renderPlot({country_fuel_plot_()}) 
 
-output$total_fuel_plot <- renderPlot(total_fuel_plot(country_names = input$country_names)) 
+total_fuel_plot_ <- reactive({
+  req(input$country_names)
+  total_fuel_plot(country_names = input$country_names)
+})
+
+output$total_fuel_plot <- renderPlot(total_fuel_plot_()) 
 
 
 # sidebar
@@ -88,12 +118,16 @@ output$fuel_types <- renderUI({
                         selected = "Turkey", 
                         multiple = FALSE)})
   
+  country_fuel_select_ <- reactive({
+    req(input$country_names)
+    country_fuel_select(country_name = input$country_names)
+  })
   
   output$fuel_type_picker <- renderUI({
     pickerInput(inputId = "fuel_type_picker",
                 label = "Select Fuel Type", 
-                choices = unique_primary_fuel,
-                selected = c("Coal", "Gas", "Hydro"), 
+                choices = country_fuel_select_(),
+                selected = country_fuel_select_(), 
                 multiple = TRUE,options = list(`actions-box` = TRUE))})
   
 

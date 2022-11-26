@@ -3,7 +3,7 @@ library(tidyverse)
 library(htmltools)
 library(randomcoloR)
 
-distinctColorPalette(15)
+
 
 primary_fuel_col <- colorFactor(distinctColorPalette(15), dt$primary_fuel)
 
@@ -13,6 +13,7 @@ cluster_col <-
 
 
 leaf_global <- function(fuel_name, level) {
+  
   dt %>% 
     filter(primary_fuel == fuel_name, cluster %in% level) %>% 
     leaflet(options = leafletOptions(zoomControl = FALSE,
@@ -89,7 +90,13 @@ top_15_plot <- function(fuel_name){
  }
 
  
-   
+ country_fuel_select <- function(country_name){
+   dt %>% 
+     filter(country_long == country_name) %>% 
+     distinct(primary_fuel) %>% 
+     pull(primary_fuel) %>% as.character()
+ }
+  
 
 
 
