@@ -39,7 +39,7 @@ total_fuel_plot <- function(country_names = unique_country_names){
     ggplot(aes(perc,fct_reorder(primary_fuel,perc) , fill =primary_fuel)) +
     geom_col() + labs(x = NULL, y = NULL, fill = "Primary Fuel") +
     ggtitle("Worldwide Power Plants Percentage by Fuel Type ") + 
-    theme(legend.position = "none") +
+    theme(legend.position = "none",panel.background = element_rect(fill = "#efefef")) +
     scale_x_continuous(labels = scales::percent) +
     geom_text(aes(y =fct_reorder(primary_fuel,perc),label =  scales::percent(perc,2)))
 }
@@ -59,7 +59,7 @@ top_15_plot <- function(fuel_name){
     ggplot(aes(perc,fct_reorder(country_long,perc) , fill =country_long)) +
     geom_col() + labs(x = NULL, y = NULL, fill = "Primary Fuel") +
     ggtitle(paste0("How many percentage capacity each country has on ",fuel_name )) + 
-    theme(legend.position = "none") +
+    theme(legend.position = "none",panel.background = element_rect(fill = "#efefef")) +
     scale_x_continuous(labels = scales::percent) +
     geom_text(aes(y =fct_reorder(country_long,perc),label =  scales::percent(perc,2)))
 }
@@ -85,7 +85,8 @@ top_15_plot <- function(fuel_name){
    dt %>% 
      filter(primary_fuel %in% fuel_type & country_long == country_name) %>% 
      ggplot(aes(fct_rev(fct_reorder(name,capacity_mw)) , capacity_mw, fill = primary_fuel) )+ 
-     geom_col() +theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+     geom_col() +theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+                       panel.background = element_rect(fill = "#efefef")) +
      labs(x = NULL, y = NULL, fill = "Fuel Type") 
  }
 

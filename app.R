@@ -5,6 +5,7 @@ library(shinyjs)
 library(shinyWidgets)
 library(tidyverse)
 library(leaflet)
+library(bslib)
 
 # data source ----
 source(file = "data.R")
@@ -16,7 +17,7 @@ ui <- dashboardPage(
   dashboardHeader(title = "Power Plants"),
   dashboardSidebar(collapsed = FALSE,uiOutput("sidebar")),
   dashboardBody(tabsetPanel(id = "tab_selected",
-    tabPanel(title = "Global",
+    tabPanel(title = "Global", 
              leafletOutput("leaf_global_map"),
              splitLayout(cellWidths = c("50%", "50%"),
                          plotOutput("total_fuel_plot_"),
