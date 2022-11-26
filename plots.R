@@ -11,16 +11,16 @@ cluster_col <-
   colorFactor(palette = c("#1b9e77", "#d95f02", "#7570b3"), 
               levels = c("Low", "Medium", "High"))
 
-"CartoDB.Voyager"
-leaf_global <- function(fuel_name) {
+
+leaf_global <- function(fuel_name, level) {
   dt %>% 
-    filter(primary_fuel == fuel_name) %>% 
+    filter(primary_fuel == fuel_name, cluster %in% level) %>% 
     leaflet(options = leafletOptions(zoomControl = FALSE,
                                      minZoom = 1, maxZoom = 5)) %>% 
     addTiles() %>% 
     addCircles(lng =~ longitude,lat =~ latitude,opacity = 0.5, 
                color =~ cluster_col(cluster),radius =~ capacity_mw ) %>% 
-    addProviderTiles(providers$Wikimedia) %>% 
+    addProviderTiles(providers$Esri.WorldGrayCanvas) %>% 
     addLegend(pal = cluster_col, values =~ cluster,opacity = 0.8,title = NA) %>% 
     setView(lng = 28,lat = 41, zoom = 2.4)
   
@@ -28,8 +28,10 @@ leaf_global <- function(fuel_name) {
 
 
 
-total_fuel_plot <- function(){
+
+total_fuel_plot <- function(country_names = unique_country_names){
   dt %>% 
+    filter(country_long %in% country_names) %>% 
     mutate(total = sum(capacity_mw)) %>% 
     group_by(primary_fuel) %>% 
     summarise(perc = sum(capacity_mw/ total)) %>% 
@@ -65,7 +67,7 @@ top_15_plot <- function(fuel_name){
  leaf_country <- function(country_name, fuel_type){
    
    dt %>% 
-     filter(country_long == country_name & primary_fuel == fuel_type ) %>% 
+     filter(country_long == country_name & primary_fuel %in% fuel_type ) %>% 
      leaflet(options = leafletOptions(zoomControl = FALSE,
                                       minZoom = 1, maxZoom = 12)) %>% 
      addTiles() %>% 
@@ -73,14 +75,14 @@ top_15_plot <- function(fuel_name){
                 color =~ primary_fuel_col(primary_fuel),
                 radius =~ capacity_mw,
                 label = ~htmlEscape(paste0("Name: ",name,","," Fuel: ",primary_fuel,","," Capacity(MW): ",capacity_mw))) %>% 
-     addProviderTiles(providers$CartoDB.Voyager) %>% 
+     addProviderTiles(providers$Esri.WorldGrayCanvas) %>% 
      addLegend(pal = primary_fuel_col, values =~ primary_fuel,opacity = 0.8,title = NA)
    
  } 
 
  country_fuel_plot <- function(fuel_type, country_name) {
    dt %>% 
-     filter(primary_fuel == fuel_type & country_long == country_name) %>% 
+     filter(primary_fuel %in% fuel_type & country_long == country_name) %>% 
      ggplot(aes(fct_rev(fct_reorder(name,capacity_mw)) , capacity_mw, fill = primary_fuel) )+ 
      geom_col() +theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
      labs(x = NULL, y = NULL, fill = "Fuel Type") 

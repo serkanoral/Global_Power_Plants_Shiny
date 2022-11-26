@@ -158,14 +158,17 @@ unique_primary_fuel<-  dt %>%
 unique_country_names<- dt %>% 
   distinct(country_long) %>% 
   arrange(country_long) %>% 
-  pull(country_long)
+  pull(country_long) %>% as.character()
   
+unique_levels <- dt %>% 
+  distinct(cluster) %>% 
+  pull(cluster) %>% as.character()
 
 # Functions ----
 
 
 
-rm(list=ls()[! ls() %in% c("map","dt","unique_primary_fuel","unique_country_names")])
+rm(list=ls()[! ls() %in% c("map","dt","unique_primary_fuel","unique_country_names","unique_levels")])
 
 
 
