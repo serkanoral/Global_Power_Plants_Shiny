@@ -5,7 +5,7 @@ library(shinyjs)
 library(shinyWidgets)
 library(tidyverse)
 library(leaflet)
-library(bslib)
+library(shinydashboardPlus)
 
 # data source ----
 source(file = "data.R")
@@ -13,10 +13,12 @@ source(file = "plots.R")
 
 
 
-ui <- dashboardPage(
+
+ui <- dashboardPage(skin = "midnight",
   dashboardHeader(title = "Power Plants"),
-  dashboardSidebar(collapsed = FALSE,uiOutput("sidebar")),
-  dashboardBody(tabsetPanel(id = "tab_selected",
+  dashboardSidebar(collapsed = FALSE, uiOutput("sidebar")),
+  dashboardBody( tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "main.css")),
+    tabsetPanel(id = "tab_selected",
     tabPanel(title = "Global", 
              leafletOutput("leaf_global_map"),
              splitLayout(cellWidths = c("50%", "50%"),

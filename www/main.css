@@ -1,0 +1,7 @@
+/* header title font */
+.main-header .logo {
+  font-family: "Calibri",  serif, Times, "Times New Roman";
+  font-weight: bold;
+  font-size: 32px;
+  color: rgba(255, 255, 255, 1);
+}

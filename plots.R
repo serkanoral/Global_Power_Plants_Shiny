@@ -2,13 +2,14 @@ library(leaflet)
 library(tidyverse)
 library(htmltools)
 library(randomcoloR)
+library(RColorBrewer)
 
 
-
+set.seed(123)
 primary_fuel_col <- colorFactor(distinctColorPalette(15), dt$primary_fuel)
 
 cluster_col <- 
-  colorFactor(palette = c("#1b9e77", "#d95f02", "#7570b3"), 
+  colorFactor(palette = c("#fee8c8", "#fdbb84", "#e34a33"), 
               levels = c("Low", "Medium", "High"))
 
 
@@ -18,7 +19,7 @@ leaf_global <- function(fuel_name, level) {
     filter(primary_fuel == fuel_name, cluster %in% level) %>% 
     leaflet(options = leafletOptions(zoomControl = FALSE,
                                      minZoom = 1, maxZoom = 5)) %>% 
-    addTiles() %>% 
+   # addTiles() %>% 
     addCircles(lng =~ longitude,lat =~ latitude,opacity = 0.5, 
                color =~ cluster_col(cluster),radius =~ capacity_mw ) %>% 
     addProviderTiles(providers$Esri.WorldGrayCanvas) %>% 
@@ -29,7 +30,7 @@ leaf_global <- function(fuel_name, level) {
 
 
 
-
+set.seed(123)
 total_fuel_plot <- function(country_names = unique_country_names){
   dt %>% 
     filter(country_long %in% country_names) %>% 
@@ -38,10 +39,10 @@ total_fuel_plot <- function(country_names = unique_country_names){
     summarise(perc = sum(capacity_mw/ total)) %>% 
     ggplot(aes(perc,fct_reorder(primary_fuel,perc) , fill =primary_fuel)) +
     geom_col() + labs(x = NULL, y = NULL, fill = "Primary Fuel") +
-    ggtitle("Worldwide Power Plants Percentage by Fuel Type ") + 
+    ggtitle("Power Plants Percentage by Fuel Type ") + 
     theme(legend.position = "none",panel.background = element_rect(fill = "#efefef")) +
     scale_x_continuous(labels = scales::percent) +
-    geom_text(aes(y =fct_reorder(primary_fuel,perc),label =  scales::percent(perc,2)))
+    geom_text(aes(y =fct_reorder(primary_fuel,perc),label =  scales::percent(perc,2))) 
 }
 
 
@@ -58,7 +59,7 @@ top_15_plot <- function(fuel_name){
     slice_head(n=15) %>% 
     ggplot(aes(perc,fct_reorder(country_long,perc) , fill =country_long)) +
     geom_col() + labs(x = NULL, y = NULL, fill = "Primary Fuel") +
-    ggtitle(paste0("How many percentage capacity each country has on ",fuel_name )) + 
+    ggtitle(paste0("How many percentage capacity each country has on ",fuel_name,"?" )) + 
     theme(legend.position = "none",panel.background = element_rect(fill = "#efefef")) +
     scale_x_continuous(labels = scales::percent) +
     geom_text(aes(y =fct_reorder(country_long,perc),label =  scales::percent(perc,2)))
@@ -71,7 +72,7 @@ top_15_plot <- function(fuel_name){
      filter(country_long == country_name & primary_fuel %in% fuel_type ) %>% 
      leaflet(options = leafletOptions(zoomControl = FALSE,
                                       minZoom = 1, maxZoom = 12)) %>% 
-     addTiles() %>% 
+     #addTiles() %>% 
      addCircles(lng =~ longitude,lat =~ latitude,opacity = 0.7, 
                 color =~ primary_fuel_col(primary_fuel),
                 radius =~ capacity_mw,
@@ -81,14 +82,15 @@ top_15_plot <- function(fuel_name){
    
  } 
 
+ set.seed(123)
  country_fuel_plot <- function(fuel_type, country_name) {
    dt %>% 
      filter(primary_fuel %in% fuel_type & country_long == country_name) %>% 
      ggplot(aes(fct_rev(fct_reorder(name,capacity_mw)) , capacity_mw, fill = primary_fuel) )+ 
      geom_col() +theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
                        panel.background = element_rect(fill = "#efefef")) +
-     labs(x = NULL, y = NULL, fill = "Fuel Type") 
- }
+     labs(x = NULL, y = NULL, fill = "Fuel Type") + ggtitle("Power Plants")
+   }
 
  
  country_fuel_select <- function(country_name){
