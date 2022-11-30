@@ -4,7 +4,7 @@ library(htmltools)
 library(randomcoloR)
 library(RColorBrewer)
 
-
+#Creating palettes
 set.seed(123)
 primary_fuel_col <- colorFactor(distinctColorPalette(15), dt$primary_fuel)
 
@@ -13,6 +13,7 @@ cluster_col <-
               levels = c("Low", "Medium", "High"))
 
 
+# Global - Map - Funtion
 leaf_global <- function(fuel_name, level) {
   
   dt %>% 
@@ -29,7 +30,7 @@ leaf_global <- function(fuel_name, level) {
 }
 
 
-
+# Power plant capacity by fuel type - Global and Country
 set.seed(123)
 total_fuel_plot <- function(country_names = unique_country_names){
   dt %>% 
@@ -45,6 +46,7 @@ total_fuel_plot <- function(country_names = unique_country_names){
     geom_text(aes(y =fct_reorder(primary_fuel,perc),label =  scales::percent(perc,2))) 
 }
 
+# Global - top 15 country with top percentage of certain fuel type
 
 top_15_plot <- function(fuel_name){
   dt %>% 
@@ -66,6 +68,7 @@ top_15_plot <- function(fuel_name){
 }
   
 
+# Country - Second page map - by country
  leaf_country <- function(country_name, fuel_type){
    
    dt %>% 
@@ -82,6 +85,7 @@ top_15_plot <- function(fuel_name){
    
  } 
 
+ # Country - fuel type percentage by country
  set.seed(123)
  country_fuel_plot <- function(fuel_type, country_name) {
    dt %>% 
@@ -92,7 +96,7 @@ top_15_plot <- function(fuel_name){
      labs(x = NULL, y = NULL, fill = "Fuel Type") + ggtitle("Power Plants")
    }
 
- 
+ # Country - to show the available fuel type power plants
  country_fuel_select <- function(country_name){
    dt %>% 
      filter(country_long == country_name) %>% 
