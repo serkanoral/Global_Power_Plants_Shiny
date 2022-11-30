@@ -26,6 +26,6 @@ About the Data
 	- `longitude` (number): geolocation in decimal degrees; WGS84 (EPSG:4326)
 	- `primary_fuel` (text): energy source used in primary electricity generation or export
 
-
+Here is the app. https://serkanoral.shinyapps.io/Power_Plants_2018/
 The data can be downloaded from https://datasets.wri.org/dataset/globalpowerplantdatabase .
 
