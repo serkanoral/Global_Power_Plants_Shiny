@@ -1,8 +1,8 @@
 library(tidyverse)
-library(maps)
+
 library(RColorBrewer)
-library(countrycode)
-library(naniar)
+
+
 
 
 power_plants <- read_csv("global_power_plant_database_v_1_3/global_power_plant_database.csv")

@@ -1,11 +1,13 @@
 
 library(shiny)
 library(shinydashboard)
-library(shinyjs)
+
 library(shinyWidgets)
 library(tidyverse)
 library(leaflet)
 library(shinydashboardPlus)
+library(rsconnect)
+library(terra)
 
 # data source ----
 source(file = "data.R")
